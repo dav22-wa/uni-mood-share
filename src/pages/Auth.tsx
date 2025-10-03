@@ -22,7 +22,7 @@ const Auth = () => {
   }, [navigate]);
 
   const validateEmail = (email: string) => {
-    return email.endsWith("@embuni.ac.ke");
+    return email.endsWith("@student.embuni.ac.ke");
   };
 
   const handleAuth = async (e: React.FormEvent) => {
@@ -31,7 +31,7 @@ const Auth = () => {
     if (!validateEmail(email)) {
       toast({
         title: "Invalid Email",
-        description: "Only @embuni.ac.ke email addresses are allowed",
+        description: "Only @student.embuni.ac.ke email addresses are allowed",
         variant: "destructive",
       });
       return;
@@ -90,7 +90,7 @@ const Auth = () => {
               <Input
                 id="email"
                 type="email"
-                placeholder="you@embuni.ac.ke"
+                placeholder="you@student.embuni.ac.ke"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
                 required
