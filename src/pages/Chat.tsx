@@ -45,10 +45,16 @@ const Chat = () => {
       const { data: { user } } = await supabase.auth.getUser();
       if (user) setCurrentUserId(user.id);
       await fetchRoomAndMessages();
-      subscribeToMessages();
     };
 
     initialize();
+    
+    // Set up real-time subscription after initial load
+    const subscription = subscribeToMessages();
+    
+    return () => {
+      subscription();
+    };
   }, [mood]);
 
   const fetchRoomAndMessages = async () => {
@@ -77,30 +83,40 @@ const Chat = () => {
         .order("created_at", { ascending: true });
 
       if (error) throw error;
+      
+      console.log("Fetched messages:", data); // Debug log
       setMessages(data || []);
-      scrollToBottom();
+      
+      // Use setTimeout to ensure smooth scrolling after state update
+      setTimeout(() => scrollToBottom(), 100);
     } catch (error) {
       console.error("Error fetching messages:", error);
     }
   };
 
   const subscribeToMessages = () => {
+    console.log("Setting up real-time subscription for mood:", mood);
+    
     const channel = supabase
-      .channel("chat-messages")
+      .channel(`chat-messages-${mood}`)
       .on(
         "postgres_changes",
         {
-          event: "INSERT",
+          event: "*",
           schema: "public",
           table: "chat_messages",
         },
         (payload) => {
+          console.log("Real-time event received:", payload);
           fetchRoomAndMessages();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
 
     return () => {
+      console.log("Unsubscribing from channel");
       supabase.removeChannel(channel);
     };
   };

@@ -80,59 +80,61 @@ export const ChatMessage = ({
   }, [offset]);
 
   return (
-    <div
-      ref={messageRef}
-      className={`flex gap-3 ${isOwn ? "flex-row-reverse" : ""}`}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-      style={{
-        transform: `translateX(${isOwn ? -offset : offset}px)`,
-        transition: touchStart ? "none" : "transform 0.3s ease",
-      }}
-    >
+    <div className="relative">
       <div
-        className={`max-w-[80%] rounded-2xl p-4 ${
-          isOwn ? "bg-primary text-primary-foreground" : "bg-muted"
-        }`}
+        ref={messageRef}
+        className={`flex gap-3 ${isOwn ? "flex-row-reverse" : ""}`}
+        onTouchStart={handleTouchStart}
+        onTouchMove={handleTouchMove}
+        onTouchEnd={handleTouchEnd}
+        style={{
+          transform: `translateX(${isOwn ? -offset : offset}px)`,
+          transition: touchStart ? "none" : "transform 0.3s ease",
+        }}
       >
-        {replyToMessage && (
-          <div className="mb-2 pb-2 border-b border-border/50 opacity-70">
-            <p className="text-xs font-semibold">
-              Replying to {replyToMessage.profiles.display_name}
-            </p>
-            <p className="text-xs truncate">{replyToMessage.message}</p>
-          </div>
-        )}
-        <p className="text-xs font-semibold mb-1">
-          {message.profiles.display_name}
-        </p>
-        <p className="break-words">{message.message}</p>
-        <p className="text-xs mt-2 opacity-70">
-          {new Date(message.created_at).toLocaleTimeString()}
-        </p>
-      </div>
-      <div className="flex flex-col gap-1">
-        {!isOwn && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => onReport(message.id)}
-          >
-            <AlertTriangle className="h-4 w-4" />
-          </Button>
-        )}
-        {isOwn && (
-          <Button
-            variant="ghost"
-            size="icon"
-            className="h-8 w-8"
-            onClick={() => onDelete(message.id)}
-          >
-            <Trash2 className="h-4 w-4" />
-          </Button>
-        )}
+        <div
+          className={`max-w-[80%] rounded-2xl p-4 ${
+            isOwn ? "bg-primary text-primary-foreground" : "bg-muted"
+          }`}
+        >
+          {replyToMessage && (
+            <div className="mb-2 pb-2 border-b border-border/50 opacity-70">
+              <p className="text-xs font-semibold">
+                Replying to {replyToMessage.profiles.display_name}
+              </p>
+              <p className="text-xs truncate">{replyToMessage.message}</p>
+            </div>
+          )}
+          <p className="text-xs font-semibold mb-1">
+            {message.profiles.display_name}
+          </p>
+          <p className="break-words">{message.message}</p>
+          <p className="text-xs mt-2 opacity-70">
+            {new Date(message.created_at).toLocaleTimeString()}
+          </p>
+        </div>
+        <div className="flex flex-col gap-1">
+          {!isOwn && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => onReport(message.id)}
+            >
+              <AlertTriangle className="h-4 w-4" />
+            </Button>
+          )}
+          {isOwn && (
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-8 w-8"
+              onClick={() => onDelete(message.id)}
+            >
+              <Trash2 className="h-4 w-4" />
+            </Button>
+          )}
+        </div>
       </div>
       {offset > minSwipeDistance && (
         <div className={`absolute ${isOwn ? "right-0" : "left-0"} top-1/2 -translate-y-1/2`}>
