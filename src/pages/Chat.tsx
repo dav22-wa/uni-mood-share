@@ -4,7 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Send, AlertTriangle, ArrowLeft } from "lucide-react";
+import { Send, ArrowLeft, LogOut, X } from "lucide-react";
+import { ChatMessage } from "@/components/ChatMessage";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -24,6 +25,7 @@ interface Message {
     display_name: string;
   };
   user_id: string;
+  reply_to?: string | null;
 }
 
 const Chat = () => {
@@ -34,6 +36,7 @@ const Chat = () => {
   const [loading, setLoading] = useState(false);
   const [reportingMessage, setReportingMessage] = useState<string | null>(null);
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
+  const [replyingTo, setReplyingTo] = useState<{ id: string; message: string } | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
 
@@ -65,6 +68,7 @@ const Chat = () => {
           message,
           created_at,
           user_id,
+          reply_to,
           profiles (
             display_name
           )
@@ -128,10 +132,12 @@ const Chat = () => {
           room_id: room.id,
           user_id: user.id,
           message: newMessage.trim(),
+          reply_to: replyingTo?.id || null,
         });
 
       if (error) throw error;
       setNewMessage("");
+      setReplyingTo(null);
     } catch (error: any) {
       toast({
         title: "Error",
@@ -175,6 +181,37 @@ const Chat = () => {
     }
   };
 
+  const deleteMessage = async (messageId: string) => {
+    try {
+      const { error } = await supabase
+        .from("chat_messages")
+        .delete()
+        .eq("id", messageId);
+
+      if (error) throw error;
+
+      toast({
+        title: "Message deleted",
+        description: "Your message has been removed",
+      });
+    } catch (error: any) {
+      toast({
+        title: "Error",
+        description: error.message,
+        variant: "destructive",
+      });
+    }
+  };
+
+  const handleReply = (messageId: string, messageText: string) => {
+    setReplyingTo({ id: messageId, message: messageText });
+  };
+
+  const handleSignOut = async () => {
+    await supabase.auth.signOut();
+    navigate("/");
+  };
+
   const getMoodEmoji = (mood?: string) => {
     const moodMap: Record<string, string> = {
       happy: "😊",
@@ -205,47 +242,54 @@ const Chat = () => {
             {messages.length} messages
           </p>
         </div>
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={handleSignOut}
+          title="Sign out"
+        >
+          <LogOut className="h-5 w-5" />
+        </Button>
       </div>
 
       <div className="flex-1 overflow-y-auto p-4 space-y-4">
-        {messages.map((msg) => (
-          <div
-            key={msg.id}
-            className={`flex gap-3 ${
-              msg.user_id === currentUserId ? "flex-row-reverse" : ""
-            }`}
-          >
-            <div
-              className={`max-w-[80%] rounded-2xl p-4 ${
-                msg.user_id === currentUserId
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted"
-              }`}
-            >
-              <p className="text-xs font-semibold mb-1">
-                {msg.profiles.display_name}
-              </p>
-              <p className="break-words">{msg.message}</p>
-              <p className="text-xs mt-2 opacity-70">
-                {new Date(msg.created_at).toLocaleTimeString()}
-              </p>
-            </div>
-            {msg.user_id !== currentUserId && (
-              <Button
-                variant="ghost"
-                size="icon"
-                className="h-8 w-8"
-                onClick={() => setReportingMessage(msg.id)}
-              >
-                <AlertTriangle className="h-4 w-4" />
-              </Button>
-            )}
-          </div>
-        ))}
+        {messages.map((msg) => {
+          const replyToMessage = msg.reply_to
+            ? messages.find((m) => m.id === msg.reply_to)
+            : null;
+          
+          return (
+            <ChatMessage
+              key={msg.id}
+              message={msg}
+              replyToMessage={replyToMessage}
+              isOwn={msg.user_id === currentUserId}
+              onReport={setReportingMessage}
+              onReply={handleReply}
+              onDelete={deleteMessage}
+            />
+          );
+        })}
         <div ref={messagesEndRef} />
       </div>
 
       <form onSubmit={sendMessage} className="p-4 bg-card border-t">
+        {replyingTo && (
+          <div className="mb-2 p-2 bg-muted rounded-lg flex items-center justify-between">
+            <div className="flex-1 min-w-0">
+              <p className="text-xs font-semibold">Replying to</p>
+              <p className="text-xs truncate">{replyingTo.message}</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="icon"
+              className="h-6 w-6"
+              onClick={() => setReplyingTo(null)}
+            >
+              <X className="h-4 w-4" />
+            </Button>
+          </div>
+        )}
         <div className="flex gap-2">
           <Input
             value={newMessage}
