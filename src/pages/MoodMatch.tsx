@@ -11,7 +11,7 @@ interface MoodCheckin {
   created_at: string;
   profiles: {
     display_name: string;
-  };
+  } | null;
 }
 
 const MoodMatch = () => {
@@ -61,7 +61,8 @@ const MoodMatch = () => {
         .order("created_at", { ascending: false });
 
       if (error) throw error;
-      setMatches(matchesData || []);
+      // Filter out matches with null profiles
+      setMatches((matchesData || []).filter(m => m.profiles !== null));
     } catch (error) {
       console.error("Error fetching matches:", error);
     } finally {
@@ -110,7 +111,7 @@ const MoodMatch = () => {
                   {getMoodEmoji(match.mood)}
                 </div>
                 <div className="flex-1">
-                  <p className="font-medium">{match.profiles.display_name}</p>
+                  <p className="font-medium">{match.profiles?.display_name || "Anonymous"}</p>
                   <p className="text-sm text-muted-foreground">
                     {new Date(match.created_at).toLocaleTimeString()}
                   </p>
