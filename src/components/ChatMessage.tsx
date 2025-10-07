@@ -114,6 +114,15 @@ export const ChatMessage = ({
           </p>
         </div>
         <div className="flex flex-col gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            className="h-8 w-8"
+            onClick={() => onReply(message.id, message.message)}
+            title="Reply"
+          >
+            <Reply className="h-4 w-4" />
+          </Button>
           {!isOwn && (
             <Button
               variant="ghost"
