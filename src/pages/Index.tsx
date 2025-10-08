@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Loader2, LogOut } from "lucide-react";
+import { Loader2, LogOut, MessageCircle } from "lucide-react";
 
 const Index = () => {
   const [user, setUser] = useState<any>(null);
@@ -15,14 +15,14 @@ const Index = () => {
       setLoading(false);
       
       if (session?.user) {
-        navigate("/mood-checkin");
+        navigate("/messages");
       }
     });
 
     const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
       setUser(session?.user ?? null);
       if (session?.user) {
-        navigate("/mood-checkin");
+        navigate("/messages");
       }
     });
 
@@ -45,18 +45,21 @@ const Index = () => {
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-primary/10 via-secondary/10 to-accent/10 p-4">
       <div className="text-center max-w-md">
-        <div className="text-6xl mb-6 animate-bounce">✨</div>
+        <div className="text-6xl mb-6 animate-bounce">
+          <MessageCircle className="h-24 w-24 mx-auto text-primary" />
+        </div>
         <h1 className="text-5xl font-bold mb-4 bg-gradient-to-r from-primary via-secondary to-accent bg-clip-text text-transparent">
-          MoodLink
+          ChatApp
         </h1>
         <p className="text-xl text-muted-foreground mb-8">
-          Connect with students who understand how you feel
+          Connect and chat with friends in real-time
         </p>
         
         {user ? (
           <div className="space-y-4">
-            <Button onClick={() => navigate("/mood-checkin")} size="lg" className="w-full">
-              Check In Your Mood
+            <Button onClick={() => navigate("/messages")} size="lg" className="w-full">
+              <MessageCircle className="mr-2 h-5 w-5" />
+              Open Messages
             </Button>
             <Button onClick={handleSignOut} variant="outline" size="lg" className="w-full">
               <LogOut className="mr-2 h-4 w-4" />
