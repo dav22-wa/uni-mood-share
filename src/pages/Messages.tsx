@@ -42,18 +42,27 @@ const Messages = () => {
     try {
       const { data, error } = await supabase
         .from("contacts")
-        .select(`
-          id,
-          contact_id,
-          profiles!contacts_contact_id_fkey (
-            display_name,
-            avatar_url
-          )
-        `)
-        .order("created_at", { ascending: false });
+        .select("id, contact_id, created_at");
 
       if (error) throw error;
-      setContacts(data || []);
+
+      // Fetch profile data for each contact
+      const contactsWithProfiles = await Promise.all(
+        (data || []).map(async (contact) => {
+          const { data: profile } = await supabase
+            .from("profiles")
+            .select("display_name, avatar_url")
+            .eq("id", contact.contact_id)
+            .single();
+
+          return {
+            ...contact,
+            profiles: profile || { display_name: "Unknown", avatar_url: null },
+          };
+        })
+      );
+
+      setContacts(contactsWithProfiles);
     } catch (error: any) {
       toast({
         title: "Error",
