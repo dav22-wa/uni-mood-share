@@ -38,7 +38,7 @@ const MoodCheckin = () => {
         description: "Finding others who feel the same...",
       });
 
-      navigate("/mood-match");
+      navigate("/group-chat");
     } catch (error: any) {
       toast({
         title: "Error",
