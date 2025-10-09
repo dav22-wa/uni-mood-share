@@ -4,8 +4,8 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Send, LogOut, X, Users, Bot } from "lucide-react";
-import { ChatMessage } from "@/components/ChatMessage";
+import { Send, LogOut, X, Users, Bot, Reply, AlertTriangle, Trash2 } from "lucide-react";
+import { Avatar } from "@/components/Avatar";
 import { Avatar } from "@/components/Avatar";
 import {
   AlertDialog,
@@ -403,15 +403,70 @@ const GroupChat = () => {
             : null;
           
           return (
-            <ChatMessage
-              key={msg.id}
-              message={msg}
-              replyToMessage={replyToMessage}
-              isOwn={msg.user_id === currentUserId}
-              onReport={setReportingMessage}
-              onReply={handleReply}
-              onDelete={deleteMessage}
-            />
+            <div key={msg.id} className={`flex gap-3 ${msg.user_id === currentUserId ? "flex-row-reverse" : ""} mb-4`}>
+              <div
+                className={`max-w-[80%] rounded-2xl p-4 shadow-md ${
+                  msg.user_id === currentUserId
+                    ? "bg-primary text-primary-foreground"
+                    : "bg-card border border-border"
+                }`}
+              >
+                {!msg.user_id === currentUserId && msg.profiles && (
+                  <p className="text-xs font-semibold mb-1 opacity-70">
+                    {msg.profiles.display_name}
+                  </p>
+                )}
+                {replyToMessage && (
+                  <div className="mb-2 pb-2 border-b border-border/50 opacity-70">
+                    <p className="text-xs font-semibold">
+                      Replying to {replyToMessage.profiles?.display_name}
+                    </p>
+                    <p className="text-xs truncate">{replyToMessage.message}</p>
+                  </div>
+                )}
+                <p className="break-words whitespace-pre-wrap">{msg.message}</p>
+                <div className="flex items-center gap-1 mt-2 justify-end">
+                  <p className="text-xs opacity-70">
+                    {new Date(msg.created_at).toLocaleTimeString([], {
+                      hour: "2-digit",
+                      minute: "2-digit",
+                    })}
+                  </p>
+                </div>
+              </div>
+              <div className="flex flex-col gap-1">
+                {onReply && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => handleReply(msg.id, msg.message)}
+                  >
+                    <Reply className="h-4 w-4" />
+                  </Button>
+                )}
+                {msg.user_id !== currentUserId && onReport && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => setReportingMessage(msg.id)}
+                  >
+                    <AlertTriangle className="h-4 w-4" />
+                  </Button>
+                )}
+                {msg.user_id === currentUserId && (
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-8 w-8"
+                    onClick={() => deleteMessage(msg.id)}
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                )}
+              </div>
+            </div>
           );
         })}
         <div ref={messagesEndRef} />
