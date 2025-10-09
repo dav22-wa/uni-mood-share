@@ -1,1 +1,4 @@
 project_id = "gjwphrhukmvayepehtuu"
+
+[functions.mental-health-counselor]
+verify_jwt = false

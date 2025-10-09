@@ -316,7 +316,13 @@ export type Database = {
       [_ in never]: never
     }
     Enums: {
-      mood_type: "happy" | "stressed" | "lonely" | "excited" | "tired"
+      mood_type:
+        | "happy"
+        | "stressed"
+        | "lonely"
+        | "excited"
+        | "tired"
+        | "general"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -444,7 +450,7 @@ export type CompositeTypes<
 export const Constants = {
   public: {
     Enums: {
-      mood_type: ["happy", "stressed", "lonely", "excited", "tired"],
+      mood_type: ["happy", "stressed", "lonely", "excited", "tired", "general"],
     },
   },
 } as const

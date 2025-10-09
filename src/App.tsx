@@ -8,6 +8,7 @@ import Auth from "./pages/Auth";
 import MoodCheckin from "./pages/MoodCheckin";
 import GroupChat from "./pages/GroupChat";
 import DirectChat from "./pages/DirectChat";
+import AICounselor from "./pages/AICounselor";
 import NotFound from "./pages/NotFound";
 
 const queryClient = new QueryClient();
@@ -24,6 +25,7 @@ const App = () => (
           <Route path="/mood-checkin" element={<MoodCheckin />} />
           <Route path="/group-chat" element={<GroupChat />} />
           <Route path="/chat/:contactId" element={<DirectChat />} />
+          <Route path="/ai-counselor" element={<AICounselor />} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>

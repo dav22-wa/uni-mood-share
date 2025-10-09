@@ -4,7 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
-import { Send, LogOut, X, Users, User } from "lucide-react";
+import { Send, LogOut, X, Users, Bot } from "lucide-react";
 import { ChatMessage } from "@/components/ChatMessage";
 import { Avatar } from "@/components/Avatar";
 import {
@@ -319,19 +319,33 @@ const GroupChat = () => {
 
   return (
     <div className="flex flex-col h-screen bg-background">
-      <div className="bg-card border-b p-4 flex items-center gap-4">
+      <div className="bg-gradient-to-r from-primary to-secondary text-primary-foreground p-4 flex items-center gap-4 shadow-lg">
         <div className="flex-1">
           <h1 className="text-xl font-bold flex items-center gap-2">
-            Group Chat
+            MoodLink Group Chat
           </h1>
-          <p className="text-sm text-muted-foreground">
+          <p className="text-sm opacity-90">
             {activeUsers.length} users online • {messages.length} messages
           </p>
         </div>
         
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => navigate("/ai-counselor")}
+          className="text-primary-foreground hover:bg-primary-foreground/20"
+          title="Talk to AI Counselor"
+        >
+          <Bot className="h-5 w-5" />
+        </Button>
+        
         <Sheet>
-          <SheetTrigger asChild>
-            <Button variant="outline" size="icon">
+        <SheetTrigger asChild>
+            <Button 
+              variant="ghost" 
+              size="icon"
+              className="text-primary-foreground hover:bg-primary-foreground/20"
+            >
               <Users className="h-5 w-5" />
             </Button>
           </SheetTrigger>
@@ -375,6 +389,7 @@ const GroupChat = () => {
           variant="ghost"
           size="icon"
           onClick={handleSignOut}
+          className="text-primary-foreground hover:bg-primary-foreground/20"
           title="Sign out"
         >
           <LogOut className="h-5 w-5" />
