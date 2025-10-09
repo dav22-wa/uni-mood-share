@@ -6,7 +6,6 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Send, LogOut, X, Users, Bot, Reply, AlertTriangle, Trash2 } from "lucide-react";
 import { Avatar } from "@/components/Avatar";
-import { Avatar } from "@/components/Avatar";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -411,7 +410,7 @@ const GroupChat = () => {
                     : "bg-card border border-border"
                 }`}
               >
-                {!msg.user_id === currentUserId && msg.profiles && (
+                {msg.user_id !== currentUserId && msg.profiles && (
                   <p className="text-xs font-semibold mb-1 opacity-70">
                     {msg.profiles.display_name}
                   </p>
@@ -435,17 +434,15 @@ const GroupChat = () => {
                 </div>
               </div>
               <div className="flex flex-col gap-1">
-                {onReply && (
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8"
-                    onClick={() => handleReply(msg.id, msg.message)}
-                  >
-                    <Reply className="h-4 w-4" />
-                  </Button>
-                )}
-                {msg.user_id !== currentUserId && onReport && (
+                <Button
+                  variant="ghost"
+                  size="icon"
+                  className="h-8 w-8"
+                  onClick={() => handleReply(msg.id, msg.message)}
+                >
+                  <Reply className="h-4 w-4" />
+                </Button>
+                {msg.user_id !== currentUserId && (
                   <Button
                     variant="ghost"
                     size="icon"
