@@ -103,6 +103,22 @@ const GroupChat = () => {
 
   const fetchActiveUsers = async () => {
     try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get current user's mood
+      const { data: currentMoodData } = await supabase
+        .from("mood_checkins")
+        .select("mood")
+        .eq("user_id", user.id)
+        .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!currentMoodData) return;
+
+      // Fetch only users with the same mood as current user
       const { data, error } = await supabase
         .from("mood_checkins")
         .select(`
@@ -113,6 +129,7 @@ const GroupChat = () => {
             avatar_url
           )
         `)
+        .eq("mood", currentMoodData.mood)
         .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
         .order("created_at", { ascending: false });
 
@@ -134,18 +151,33 @@ const GroupChat = () => {
 
   const fetchRoomAndMessages = async () => {
     try {
-      // Get or create a general chat room
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) return;
+
+      // Get user's current mood from today's check-in
+      const { data: moodData } = await supabase
+        .from("mood_checkins")
+        .select("mood")
+        .eq("user_id", user.id)
+        .gte("created_at", new Date(new Date().setHours(0, 0, 0, 0)).toISOString())
+        .order("created_at", { ascending: false })
+        .limit(1)
+        .maybeSingle();
+
+      if (!moodData) return;
+
+      // Get or create a room for this specific mood
       let { data: room } = await supabase
         .from("mood_chat_rooms")
         .select("id")
-        .eq("mood", "general" as any)
+        .eq("mood", moodData.mood)
         .maybeSingle();
 
       if (!room) {
-        // Create general room if it doesn't exist
+        // Create mood-specific room if it doesn't exist
         const { data: newRoom, error: createError } = await supabase
           .from("mood_chat_rooms")
-          .insert({ mood: "general" as any })
+          .insert({ mood: moodData.mood })
           .select("id")
           .single();
         
@@ -331,10 +363,10 @@ const GroupChat = () => {
       <div className="bg-gradient-to-r from-primary to-secondary text-primary-foreground p-4 flex items-center gap-4 shadow-lg">
         <div className="flex-1">
           <h1 className="text-xl font-bold flex items-center gap-2">
-            MoodLink Group Chat
+            MoodLink - {activeUsers.length > 0 ? activeUsers[0]?.mood.charAt(0).toUpperCase() + activeUsers[0]?.mood.slice(1) : 'Group'} Chat
           </h1>
           <p className="text-sm opacity-90">
-            {activeUsers.length} users online • {messages.length} messages
+            {activeUsers.length} users in this mood • {messages.length} messages
           </p>
         </div>
         
@@ -360,7 +392,7 @@ const GroupChat = () => {
           </SheetTrigger>
           <SheetContent>
             <SheetHeader>
-              <SheetTitle>Online Users ({activeUsers.length})</SheetTitle>
+              <SheetTitle>People Feeling {activeUsers.length > 0 ? activeUsers[0]?.mood.charAt(0).toUpperCase() + activeUsers[0]?.mood.slice(1) : 'The Same'} ({activeUsers.length})</SheetTitle>
               <SheetDescription>
                 Click on a user to start a private chat
               </SheetDescription>
