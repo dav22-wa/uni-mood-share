@@ -8,58 +8,74 @@ All colors MUST be HSL.
 
 @layer base {
   :root {
-    --background: 240 100% 98%;
-    --foreground: 240 10% 10%;
+    /* Modern Mental Health Color Palette */
+    --background: 220 25% 97%;
+    --foreground: 215 20% 25%;
 
     --card: 0 0% 100%;
-    --card-foreground: 240 10% 10%;
+    --card-foreground: 215 20% 25%;
 
     --popover: 0 0% 100%;
-    --popover-foreground: 240 10% 10%;
+    --popover-foreground: 215 20% 25%;
 
-    --primary: 260 70% 60%;
+    /* Calming Teal Primary */
+    --primary: 185 70% 45%;
     --primary-foreground: 0 0% 100%;
 
-    --secondary: 200 60% 55%;
+    /* Soft Purple Secondary */
+    --secondary: 260 45% 65%;
     --secondary-foreground: 0 0% 100%;
 
-    --muted: 240 20% 95%;
-    --muted-foreground: 240 5% 50%;
+    /* Gentle Lavender Accent */
+    --accent: 270 50% 85%;
+    --accent-foreground: 260 60% 30%;
 
-    --accent: 45 100% 60%;
-    --accent-foreground: 240 10% 10%;
+    --muted: 220 20% 94%;
+    --muted-foreground: 215 15% 45%;
 
-    --destructive: 0 84.2% 60.2%;
+    --destructive: 0 65% 55%;
     --destructive-foreground: 0 0% 100%;
 
-    --border: 240 20% 90%;
-    --input: 240 20% 90%;
-    --ring: 240 60% 55%;
+    --border: 220 20% 88%;
+    --input: 220 20% 88%;
+    --ring: 185 70% 45%;
 
-    --radius: 1rem;
-    
-    /* Mood colors */
-    --mood-happy: 45 100% 60%;
-    --mood-stressed: 0 70% 65%;
-    --mood-lonely: 240 60% 70%;
-    --mood-excited: 280 60% 65%;
-    --mood-tired: 200 50% 70%;
+    --radius: 0.75rem;
 
-    --sidebar-background: 0 0% 98%;
+    /* Gradients */
+    --gradient-primary: linear-gradient(135deg, hsl(185 70% 45%), hsl(200 75% 50%));
+    --gradient-secondary: linear-gradient(135deg, hsl(260 45% 65%), hsl(270 50% 70%));
+    --gradient-calm: linear-gradient(180deg, hsl(220 25% 97%), hsl(210 30% 93%));
+  }
 
-    --sidebar-foreground: 240 5.3% 26.1%;
+  .dark {
+    --background: 220 25% 10%;
+    --foreground: 210 20% 90%;
 
-    --sidebar-primary: 240 5.9% 10%;
+    --card: 220 20% 13%;
+    --card-foreground: 210 20% 90%;
 
-    --sidebar-primary-foreground: 0 0% 98%;
+    --popover: 220 20% 13%;
+    --popover-foreground: 210 20% 90%;
 
-    --sidebar-accent: 240 4.8% 95.9%;
+    --primary: 185 65% 50%;
+    --primary-foreground: 220 25% 10%;
 
-    --sidebar-accent-foreground: 240 5.9% 10%;
+    --secondary: 260 40% 55%;
+    --secondary-foreground: 0 0% 100%;
 
-    --sidebar-border: 220 13% 91%;
+    --accent: 270 45% 25%;
+    --accent-foreground: 270 50% 85%;
 
-    --sidebar-ring: 217.2 91.2% 59.8%;
+    --muted: 220 20% 18%;
+    --muted-foreground: 215 15% 60%;
+
+    --destructive: 0 60% 50%;
+    --destructive-foreground: 0 0% 100%;
+
+    --border: 220 20% 22%;
+    --input: 220 20% 22%;
+    --ring: 185 65% 50%;
   }
 
   .dark {
