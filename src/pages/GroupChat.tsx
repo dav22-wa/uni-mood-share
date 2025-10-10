@@ -89,13 +89,17 @@ const GroupChat = () => {
     };
 
     initialize();
+  }, []);
+
+  useEffect(() => {
+    if (!roomId) return;
     
     const subscription = subscribeToMessages();
     
     return () => {
       subscription();
     };
-  }, []);
+  }, [roomId]);
 
   const fetchActiveUsers = async () => {
     try {
@@ -180,6 +184,8 @@ const GroupChat = () => {
   };
 
   const subscribeToMessages = () => {
+    if (!roomId) return () => {};
+
     const channel = supabase
       .channel("group-chat-messages")
       .on(
@@ -188,12 +194,16 @@ const GroupChat = () => {
           event: "*",
           schema: "public",
           table: "chat_messages",
+          filter: `room_id=eq.${roomId}`,
         },
-        () => {
+        (payload) => {
+          console.log("Message change detected:", payload);
           fetchRoomAndMessages();
         }
       )
-      .subscribe();
+      .subscribe((status) => {
+        console.log("Subscription status:", status);
+      });
 
     return () => {
       supabase.removeChannel(channel);
