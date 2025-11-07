@@ -41,17 +41,22 @@ const DirectChat = () => {
         return;
       }
       setCurrentUserId(user.id);
-      await fetchContactProfile();
-      await fetchMessages();
     };
 
     initialize();
+  }, [navigate]);
+
+  useEffect(() => {
+    if (!currentUserId || !contactId) return;
+
+    fetchContactProfile();
+    fetchMessages();
 
     const subscription = subscribeToMessages();
     return () => {
       subscription();
     };
-  }, [contactId, navigate]);
+  }, [contactId, currentUserId]);
 
   const fetchContactProfile = async () => {
     try {
