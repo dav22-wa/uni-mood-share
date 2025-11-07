@@ -64,9 +64,18 @@ const DirectChat = () => {
         .from("profiles")
         .select("*")
         .eq("id", contactId)
-        .single();
+        .maybeSingle();
 
       if (error) throw error;
+      if (!data) {
+        toast({
+          title: "Contact not found",
+          description: "This user may no longer exist",
+          variant: "destructive",
+        });
+        navigate("/messages");
+        return;
+      }
       setContactProfile(data);
     } catch (error: any) {
       toast({
