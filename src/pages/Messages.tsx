@@ -7,6 +7,7 @@ import { useToast } from "@/hooks/use-toast";
 import { LogOut, UserPlus, User as UserIcon, Search } from "lucide-react";
 import { ContactListItem } from "@/components/ContactListItem";
 import { Avatar } from "@/components/Avatar";
+import { usePresence } from "@/hooks/usePresence";
 
 interface Contact {
   id: string;
@@ -23,6 +24,7 @@ const Messages = () => {
   const [searchQuery, setSearchQuery] = useState("");
   const [currentUser, setCurrentUser] = useState<any>(null);
   const { toast } = useToast();
+  const { isUserOnline } = usePresence("messages-presence");
 
   useEffect(() => {
     const initialize = async () => {
@@ -148,6 +150,7 @@ const Messages = () => {
               id={contact.contact_id}
               name={contact.profiles.display_name}
               avatarUrl={contact.profiles.avatar_url}
+              isOnline={isUserOnline(contact.contact_id)}
               onClick={() => navigate(`/chat/${contact.contact_id}`)}
             />
           ))

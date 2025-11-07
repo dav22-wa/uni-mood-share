@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { Send, LogOut, X, Users, Bot, Reply, AlertTriangle, Trash2 } from "lucide-react";
 import { Avatar } from "@/components/Avatar";
+import { OnlineIndicator } from "@/components/OnlineIndicator";
+import { usePresence } from "@/hooks/usePresence";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -58,6 +60,7 @@ const GroupChat = () => {
   const [roomId, setRoomId] = useState<string | null>(null);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const { toast } = useToast();
+  const { isUserOnline } = usePresence("group-chat-presence");
 
   useEffect(() => {
     const initialize = async () => {
@@ -405,11 +408,16 @@ const GroupChat = () => {
                   className="w-full flex items-center gap-3 p-3 rounded-lg hover:bg-muted transition-colors"
                   disabled={user.user_id === currentUserId}
                 >
-                  <Avatar 
-                    src={user.profiles?.avatar_url} 
-                    alt={user.profiles?.display_name || "User"} 
-                    size="md"
-                  />
+                  <div className="relative">
+                    <Avatar 
+                      src={user.profiles?.avatar_url} 
+                      alt={user.profiles?.display_name || "User"} 
+                      size="md"
+                    />
+                    <div className="absolute bottom-0 right-0">
+                      <OnlineIndicator isOnline={isUserOnline(user.user_id)} size="sm" />
+                    </div>
+                  </div>
                   <div className="flex-1 text-left">
                     <p className="font-medium">
                       {user.profiles?.display_name || "Anonymous"}

@@ -6,6 +6,8 @@ import { Input } from "@/components/ui/input";
 import { useToast } from "@/hooks/use-toast";
 import { ArrowLeft, UserPlus, Search, Loader2 } from "lucide-react";
 import { Avatar } from "@/components/Avatar";
+import { OnlineIndicator } from "@/components/OnlineIndicator";
+import { usePresence } from "@/hooks/usePresence";
 
 interface User {
   id: string;
@@ -22,6 +24,7 @@ const Contacts = () => {
   const [currentUserId, setCurrentUserId] = useState<string | null>(null);
   const [existingContacts, setExistingContacts] = useState<Set<string>>(new Set());
   const { toast } = useToast();
+  const { isUserOnline } = usePresence("contacts-presence");
 
   useEffect(() => {
     const initialize = async () => {
@@ -146,7 +149,12 @@ const Contacts = () => {
                 key={user.id}
                 className="flex items-center gap-3 p-4 border-b border-border"
               >
-                <Avatar src={user.avatar_url} alt={user.display_name} size="lg" />
+                <div className="relative">
+                  <Avatar src={user.avatar_url} alt={user.display_name} size="lg" />
+                  <div className="absolute bottom-0 right-0">
+                    <OnlineIndicator isOnline={isUserOnline(user.id)} size="sm" />
+                  </div>
+                </div>
                 <div className="flex-1 min-w-0">
                   <p className="font-semibold truncate">{user.display_name}</p>
                   <p className="text-sm text-muted-foreground truncate">{user.email}</p>

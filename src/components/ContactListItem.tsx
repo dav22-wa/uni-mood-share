@@ -1,4 +1,5 @@
 import { Avatar } from "./Avatar";
+import { OnlineIndicator } from "./OnlineIndicator";
 import { formatDistanceToNow } from "date-fns";
 
 interface ContactListItemProps {
@@ -8,6 +9,7 @@ interface ContactListItemProps {
   lastMessage?: string;
   lastMessageTime?: string;
   unreadCount?: number;
+  isOnline?: boolean;
   onClick: () => void;
 }
 
@@ -17,6 +19,7 @@ export const ContactListItem = ({
   lastMessage,
   lastMessageTime,
   unreadCount = 0,
+  isOnline = false,
   onClick,
 }: ContactListItemProps) => {
   return (
@@ -24,7 +27,12 @@ export const ContactListItem = ({
       onClick={onClick}
       className="flex items-center gap-3 p-4 hover:bg-muted/50 cursor-pointer border-b border-border"
     >
-      <Avatar src={avatarUrl} alt={name} size="lg" />
+      <div className="relative">
+        <Avatar src={avatarUrl} alt={name} size="lg" />
+        <div className="absolute bottom-0 right-0">
+          <OnlineIndicator isOnline={isOnline} size="sm" />
+        </div>
+      </div>
       <div className="flex-1 min-w-0">
         <div className="flex items-center justify-between mb-1">
           <p className="font-semibold truncate">{name}</p>
